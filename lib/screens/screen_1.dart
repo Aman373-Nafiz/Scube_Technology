@@ -164,7 +164,7 @@ class _Screen1State extends State<Screen1> {
             Container(
               width: double.infinity,
               margin: const EdgeInsets.symmetric(horizontal: 12),
-              height: 80,
+              height: 90,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
@@ -327,8 +327,17 @@ class _Screen1State extends State<Screen1> {
                 ],
               ),
             ),
+            const SizedBox(height: 20),
 
-            const SizedBox(height: 25), // Bottom spacing before LT-01
+            // =======================================================
+            // --- NEW SECTION: LT-01 TABLES ---
+            // =======================================================
+            
+            _buildLt01Card(),
+            const SizedBox(height: 12),
+            _buildLt01Card(), // Duplicated to show it's reusable (as per design image having 2 blocks)
+            
+            const SizedBox(height: 30), // Bottom spacing before LT-01
           ],
         ),
       ),
@@ -484,6 +493,171 @@ class _Screen1State extends State<Screen1> {
           ),
         ],
       ),
+    );
+  }
+
+  // ---------------------------------------------------------
+  // 1. MAIN CARD WIDGET (Place this call in your build method)
+  // ---------------------------------------------------------
+  Widget _buildLt01Card() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // -- Header Row --
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "LT_01",
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF111827),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Image.asset('assets/Asset 1 5.png',height: 16, width: 16,), 
+                    const SizedBox(width: 4),
+                    Text(
+                      "495.505 kWp / 440 kW",
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF0684D9), 
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1, color: Color(0xFFF1F5F9)), // Subtle divider
+          
+          // -- 2x2 Info Grid --
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              children: [
+                // Row 1
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildEnergyItem(
+                        "Lifetime Energy",
+                        "352.96 MWh",
+                        "assets/Blue Lightning.png", //
+                        const Color(0xFFE0F2FE), // Light Blue bg
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildEnergyItem(
+                        "Today Energy",
+                        "273.69 kWh",
+                        "assets/Group 1000011031.png", //
+                        const Color(0xFFFEF9C3), // Light Yellow bg
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                // Row 2
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildEnergyItem(
+                        "Prev. Meter Energy",
+                        "0.00 MWh",
+                        "assets/Asset 1 6.png", //
+                        const Color(0xFFFFF7ED), // Light Orange/Yellow bg
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildEnergyItem(
+                        "Live Power",
+                        "352.96 MWh",
+                        "assets/Group 1000010987.png", //
+                        const Color(0xFFF3E8FF), // Light Purple bg
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------
+  // 2. HELPER WIDGET FOR INNER ITEMS
+  // ---------------------------------------------------------
+  Widget _buildEnergyItem(String label, String value, String iconPath, Color bgColor) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // Colored Icon Container
+        Container(
+          width: 36,
+          height: 36,
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Image.asset(
+            iconPath,
+            fit: BoxFit.contain,
+            // Fallback icon just in case path is wrong
+            errorBuilder: (c, e, s) => Icon(Icons.flash_on, size: 16, color: Colors.grey[400]),
+          ),
+        ),
+        const SizedBox(width: 10),
+        // Text Column
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: GoogleFonts.inter(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF6B7280), // Grey Label
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF111827), // Black Value
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
