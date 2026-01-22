@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/constants/app_colors.dart';
+import '../core/constants/app_strings.dart';
+import '../core/constants/app_text_styles.dart';
+import '../core/constants/app_routes.dart';
+import '../core/utils/image_assets.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -9,13 +13,11 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  // State variable to trigger the animation
   bool _showLoginModal = false;
 
   @override
   void initState() {
     super.initState();
-    // Wait for 2 seconds, then trigger the animation
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         setState(() {
@@ -27,64 +29,63 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Get screen height to calculate positioning
     final screenHeight = MediaQuery.of(context).size.height;
 
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xFF0096FC),
-        // Stack allows us to layer the logo behind the sliding modal
+        backgroundColor: AppColors.primaryBlue,
         body: Stack(
           children: [
-            // ---------------------------------------------
-            // 1. TOP SECTION: LOGO & TEXT
-            // ---------------------------------------------
             Positioned(
               top: 0,
               left: 0,
               right: 0,
-              // We restrict the height to the top part so it doesn't overlap weirdly
-              height: screenHeight * 0.40, 
+              height: screenHeight * 0.40,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset('assets/scube_logo.png', height: 98, width: 96),
+                  Image.asset(
+                    ImageAssets.scubeLogo,
+                    height: 98,
+                    width: 96,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: 98,
+                        width: 96,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.business,
+                          size: 48,
+                          color: AppColors.primaryBlue,
+                        ),
+                      );
+                    },
+                  ),
                   const SizedBox(height: 10),
                   Text(
-                    "SCUBE",
-                    style: GoogleFonts.inter(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 24,
-                    ),
+                    AppStrings.appTitle,
+                    style: AppTextStyles.appTitle,
                   ),
                   Text(
-                    "Control and Monitoring System",
-                    style: GoogleFonts.inter(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 20, // Adjusted slightly to fit better
-                    ),
+                    AppStrings.appSubtitle,
+                    style: AppTextStyles.appSubtitle,
                     textAlign: TextAlign.center,
                   ),
                 ],
               ),
             ),
 
-            // ---------------------------------------------
-            // 2. BOTTOM SECTION: ANIMATED LOGIN MODAL
-            // ---------------------------------------------
             AnimatedPositioned(
-              duration: const Duration(seconds: 3), // Animation speed
-              curve: Curves.linear, // Smooth curve like the video
-              
-              // If _showLoginModal is true, dock to bottom (0).
-              // If false, hide below screen (-screenHeight).
-              bottom: _showLoginModal ? 0 : -screenHeight, 
+              duration: const Duration(seconds: 2),
+              curve: Curves.linear,
+              bottom: _showLoginModal ? 0 : -screenHeight,
               left: 0,
               right: 0,
               child: Container(
-                height: screenHeight * 0.55, // Occupy bottom 55% of screen
+                height: screenHeight * 0.55,
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -98,20 +99,15 @@ class _SplashScreenState extends State<SplashScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        "Login",
-                        style: GoogleFonts.inter(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
+                        AppStrings.login,
+                        style: AppTextStyles.loginTitle,
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 30),
-                      
-                      // Example Input Field: Username
+                    
                       TextField(
                         decoration: InputDecoration(
-                          hintText: "Username",
+                          hintText: AppStrings.username,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(color: Colors.grey.shade300),
@@ -124,11 +120,10 @@ class _SplashScreenState extends State<SplashScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Example Input Field: Password
                       TextField(
                         obscureText: true,
                         decoration: InputDecoration(
-                          hintText: "Password",
+                          hintText: AppStrings.password,
                           suffixIcon: const Icon(Icons.visibility_off_outlined),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -146,53 +141,47 @@ class _SplashScreenState extends State<SplashScreen> {
                         child: TextButton(
                           onPressed: () {},
                           child: Text(
-                            "Forget password?",
-                            style: GoogleFonts.inter(
-                                color: Colors.grey, fontSize: 12),
+                            AppStrings.forgetPassword,
+                            style: AppTextStyles.forgetPassword,
                           ),
                         ),
                       ),
                       
                       const SizedBox(height: 10),
-                      
-                      // Login Button
+                  
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(context, AppRoutes.screen1);
+                        },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF0096FC),
+                          backgroundColor: AppColors.primaryBlue,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         child: Text(
-                          "Login",
-                          style: GoogleFonts.inter(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
+                          AppStrings.login,
+                          style: AppTextStyles.loginButton,
                         ),
                       ),
                       
                       const SizedBox(height: 16),
-                      
-                      // Footer Text
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Don't have any account? ",
-                            style: GoogleFonts.inter(color: Colors.grey),
+                            AppStrings.dontHaveAccount,
+                            style: AppTextStyles.footerText,
                           ),
                           GestureDetector(
-                            onTap: (){},
+                            onTap: () {
+                              Navigator.pushReplacementNamed(context, AppRoutes.screen1);
+                            },
                             child: Text(
-                              "Register Now",
-                              style: GoogleFonts.inter(
-                                color: const Color(0xFF0096FC),
-                                fontWeight: FontWeight.bold,
-                              ),
+                              AppStrings.registerNow,
+                              style: AppTextStyles.registerLink,
                             ),
                           ),
                         ],

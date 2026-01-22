@@ -1,5 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/navigation_banner.dart';
+import '../widgets/info_tile.dart';
+import '../widgets/detail_tile.dart';
+import '../widgets/weather_banner.dart';
+import '../widgets/data_table_widget.dart';
+import '../widgets/lt01_card.dart';
+import '../core/constants/app_colors.dart';
+import '../core/constants/app_strings.dart';
+import '../core/constants/app_text_styles.dart';
+import '../core/constants/app_routes.dart';
+import '../core/utils/image_assets.dart';
 
 class Screen1 extends StatefulWidget {
   const Screen1({super.key});
@@ -9,130 +20,26 @@ class Screen1 extends StatefulWidget {
 }
 
 class _Screen1State extends State<Screen1> {
-  // --- Logic to get the correct image based on Time ---
-  String _getWeatherAsset() {
-    final now = DateTime.now();
-    // Convert time to a comparable double (e.g., 14.5 = 2:30 PM)
-    final double currentTime = now.hour + (now.minute / 60.0);
-
-    // Range 1: 11:00 AM - 12:00 PM (Blue/Cloudy)
-    if (currentTime >= 11.0 && currentTime < 12.0) {
-      return "assets/Group 1000011072.png";
-    }
-    // Range 2: 12:00 PM - 01:00 PM (Red/Sunny)
-    else if (currentTime >= 12.0 && currentTime < 13.0) {
-      return "assets/Group 1000011080.png";
-    }
-    // Range 3: 02:30 PM - 03:30 PM (Moon/Dark)
-    else if (currentTime >= 14.5 && currentTime < 15.5) {
-      return "assets/Group 1000011081.png";
-    }
-
-    // Default Fallback
-    return "assets/Group 1000011072.png";
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffd7e3f1), // Light blueish-grey background
-
-      // --- Custom App Bar ---
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(101),
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-          ),
-          child: SafeArea(
-            bottom: false,
-            child: Padding(
-              padding:
-                  const EdgeInsets.only(bottom: 7.0, left: 4.0, right: 12.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back,
-                            color: Color(0xFF111827)),
-                        onPressed: () {},
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      ),
-                      Text(
-                        '1st Page',
-                        style: GoogleFonts.inter(
-                          color: const Color(0xFF111827),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Stack(
-                        alignment: Alignment.topRight,
-                        children: [
-                          const Icon(
-                            Icons.notifications_outlined,
-                            color: Color(0xFF111827),
-                            size: 26,
-                          ),
-                          Positioned(
-                            right: 2,
-                            top: 2,
-                            child: Container(
-                              width: 8,
-                              height: 8,
-                              decoration: const BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+      backgroundColor: AppColors.backgroundGrey,
+      appBar: CustomAppBar(
+        title: AppStrings.firstPage,
+        onBackPressed: () {
+          Navigator.pushReplacementNamed(context, AppRoutes.splash);
+        },
+        onNotificationPressed: () {},
       ),
-
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // --- 2nd Page Navigate Banner ---
-            Container(
-              width: double.infinity,
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              decoration: BoxDecoration(
-                color: const Color(0xFF06B6D4),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "2nd Page Navigate",
-                    style: GoogleFonts.inter(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  const Icon(Icons.chevron_right,
-                      color: Colors.white, size: 18),
-                ],
-              ),
+            NavigationBanner(
+              text: AppStrings.secondPageNavigate,
+              onTap: () {
+                Navigator.pushNamed(context, AppRoutes.screen2);
+              },
             ),
-
-            // --- Top 6 Tiles Grid Section ---
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14),
               child: GridView.count(
@@ -143,521 +50,224 @@ class _Screen1State extends State<Screen1> {
                 mainAxisSpacing: 8,
                 childAspectRatio: 2.9,
                 children: [
-                  _buildInfoTile("10000 kW", "Live AC Power",
-                      "assets/Live AC Power.png"),
-                  _buildInfoTile("82.58 %", "Plant Generation",
-                      "assets/Plant Generation.png"),
-                  _buildInfoTile("85.61 %", "Live PR", "assets/Live PR.png"),
-                  _buildInfoTile("27.58 %", "Cumulative PR",
-                      "assets/Cumulative PR.png"),
-                  _buildInfoTile("10000 ৳", "Return PV(Till Today)",
-                      "assets/Return PV(Till Today).png"),
-                  _buildInfoTile("10000 kWh", "Total Energy",
-                      "assets/Total Energy.png"),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            // --- Temperature Banner ---
-            Container(
-              width: double.infinity,
-              margin: const EdgeInsets.symmetric(horizontal: 12),
-              height: 90,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
+                  InfoTile(
+                    title: AppStrings.liveACPowerValue,
+                    subtitle: AppStrings.liveACPower,
+                    imagePath: ImageAssets.liveACPower,
+                  ),
+                  InfoTile(
+                    title: AppStrings.plantGenerationValue,
+                    subtitle: AppStrings.plantGeneration,
+                    imagePath: ImageAssets.plantGeneration,
+                  ),
+                  InfoTile(
+                    title: AppStrings.livePRValue,
+                    subtitle: AppStrings.livePR,
+                    imagePath: ImageAssets.livePR,
+                  ),
+                  InfoTile(
+                    title: AppStrings.cumulativePRValue,
+                    subtitle: AppStrings.cumulativePR,
+                    imagePath: ImageAssets.cumulativePR,
+                  ),
+                  InfoTile(
+                    title: AppStrings.returnPVValue,
+                    subtitle: AppStrings.returnPVTillToday,
+                    imagePath: ImageAssets.returnPV,
+                  ),
+                  InfoTile(
+                    title: AppStrings.totalEnergyValue,
+                    subtitle: AppStrings.totalEnergy,
+                    imagePath: ImageAssets.totalEnergy,
                   ),
                 ],
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  _getWeatherAsset(),
-                  fit: BoxFit.fill,
+            ),
+            const SizedBox(height: 12),
+            const WeatherBanner(),
+            const SizedBox(height: 15),
+            DataTableWidget(
+              rows: const [
+                DataTableRow(
+                  label: AppStrings.acMaxPower,
+                  yesterdayValue: AppStrings.acMaxPowerYesterday,
+                  todayValue: AppStrings.acMaxPowerToday,
                 ),
-              ),
+                DataTableRow(
+                  label: AppStrings.netEnergy,
+                  yesterdayValue: AppStrings.netEnergyYesterday,
+                  todayValue: AppStrings.netEnergyToday,
+                ),
+                DataTableRow(
+                  label: AppStrings.specificYield,
+                  yesterdayValue: AppStrings.specificYieldYesterday,
+                  todayValue: AppStrings.specificYieldToday,
+                ),
+                DataTableRow(
+                  label: AppStrings.netEnergy,
+                  yesterdayValue: AppStrings.netEnergyYesterday,
+                  todayValue: AppStrings.netEnergyToday,
+                ),
+                DataTableRow(
+                  label: AppStrings.specificYield,
+                  yesterdayValue: AppStrings.specificYieldYesterday,
+                  todayValue: AppStrings.specificYieldToday,
+                ),
+              ],
             ),
-
             const SizedBox(height: 15),
-
-            // --- Yesterday/Today Data Table ---
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.03),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Row(
-                      children: [
-                        const Expanded(flex: 4, child: SizedBox()),
-                        Expanded(
-                          flex: 3,
-                          child: Text(
-                            "Yesterday's Data",
-                            textAlign: TextAlign.right,
-                            style: GoogleFonts.inter(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w400,
-                              color: const Color(0xFF374151),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Text(
-                            "Today's Data",
-                            textAlign: TextAlign.right,
-                            style: GoogleFonts.inter(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w400,
-                              color: const Color(0xFF374151),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Divider(height: 1, color: Color(0xFFE5E7EB)),
-                  _buildTableRow("AC Max Power", "1636.50 kW", "2121.88 kW",
-                      isEven: false),
-                  _buildTableRow("Net Energy", "6439.16 kWh", "4875.77 kWh",
-                      isEven: true),
-                  _buildTableRow(
-                      "Specific Yield", "1.25 kWh/kWp", "0.94 kWh/kWp",
-                      isEven: false),
-                  _buildTableRow("Net Energy", "6439.16 kWh", "4875.77 kWh",
-                      isEven: true),
-                  _buildTableRow(
-                      "Specific Yield", "1.25 kWh/kWp", "0.94 kWh/kWp",
-                      isEven: false),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 15),
-
-            // =========================================================
-            // --- NEW SECTION: PV Module Banner ---
-            // =========================================================
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 12),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2)),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Image.asset("assets/Mask group.png",
-                      width: 24, height: 24), // The Blue Grid Icon
-                  const SizedBox(width: 10),
-                  Text(
-                    "Total Num of PV Module  :  ",
-                    style: GoogleFonts.inter(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w400,
-                      color: const Color(0xFF374151),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      "6372 pcs. (585 Wp each)",
-                      style: GoogleFonts.inter(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700, // Bold Value
-                        color: const Color(0xFF111827),
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
+            _buildPvModuleBanner(),
             const SizedBox(height: 12),
-
-            // =========================================================
-            // --- NEW SECTION: Capacity & Inverter Grid ---
-            // =========================================================
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: GridView.count(
-                crossAxisCount: 2, // 2 Columns for wider tiles
+                crossAxisCount: 2,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
-                childAspectRatio: 3.83, // Wider aspect ratio for these tiles
+                childAspectRatio: 3.83,
                 children: [
-                  _buildDetailTile(
-                      "Total AC Capacity", "3000 KW", "assets/Total AC Capacity.png"), // *Need generic icon or reuse
-                  _buildDetailTile(
-                      "Total DC Capacity", "3.727 MWp", "assets/Total DC Capacity.png"),
-                  _buildDetailTile("Date of Commissioning", "17/07/2024",
-                      "assets/Date of Commissioning.png"), // *Use calendar icon if png missing
-                  _buildDetailTile("Number of Inverter", "30",
-                      "assets/Number of Inverter.png"),
-                  _buildDetailTile("Total AC Capacity", "3000 KW",
-                      "assets/Total AC Capacity.png"),
-                  _buildDetailTile(
-                      "Total DC Capacity", "3.727 MWp", "assets/Total DC Capacity.png"),
+                  DetailTile(
+                    title: AppStrings.totalACCapacity,
+                    value: AppStrings.totalACCapacityValue,
+                    imagePath: ImageAssets.totalACCapacity,
+                  ),
+                  DetailTile(
+                    title: AppStrings.totalDCCapacity,
+                    value: AppStrings.totalDCCapacityValue,
+                    imagePath: ImageAssets.totalDCCapacity,
+                  ),
+                  DetailTile(
+                    title: AppStrings.dateOfCommissioning,
+                    value: AppStrings.commissioningDate,
+                    imagePath: ImageAssets.dateOfCommissioning,
+                  ),
+                  DetailTile(
+                    title: AppStrings.numberOfInverter,
+                    value: AppStrings.inverterCount,
+                    imagePath: ImageAssets.numberOfInverter,
+                  ),
+                  DetailTile(
+                    title: AppStrings.totalACCapacity,
+                    value: AppStrings.totalACCapacityValue,
+                    imagePath: ImageAssets.totalACCapacity,
+                  ),
+                  DetailTile(
+                    title: AppStrings.totalDCCapacity,
+                    value: AppStrings.totalDCCapacityValue,
+                    imagePath: ImageAssets.totalDCCapacity,
+                  ),
                 ],
               ),
             ),
             const SizedBox(height: 20),
-
-            // =======================================================
-            // --- NEW SECTION: LT-01 TABLES ---
-            // =======================================================
-            
-            _buildLt01Card(),
+            Lt01Card(
+              energyItems: [
+                EnergyData(
+                  label: AppStrings.lifetimeEnergy,
+                  value: AppStrings.lifetimeEnergyValue,
+                  iconPath: ImageAssets.blueLightning,
+                  backgroundColor: const Color(0xFFE0F2FE),
+                ),
+                EnergyData(
+                  label: AppStrings.todayEnergy,
+                  value: AppStrings.todayEnergyValue,
+                  iconPath: ImageAssets.group11031,
+                  backgroundColor: const Color(0xFFFEF9C3),
+                ),
+                EnergyData(
+                  label: AppStrings.prevMeterEnergy,
+                  value: AppStrings.prevMeterEnergyValue,
+                  iconPath: ImageAssets.asset16,
+                  backgroundColor: const Color(0xFFFFF7ED),
+                ),
+                EnergyData(
+                  label: AppStrings.livePower,
+                  value: AppStrings.livePowerValue,
+                  iconPath: ImageAssets.group10987,
+                  backgroundColor: const Color(0xFFF3E8FF),
+                ),
+              ],
+            ),
             const SizedBox(height: 12),
-            _buildLt01Card(), // Duplicated to show it's reusable (as per design image having 2 blocks)
-            
-            const SizedBox(height: 30), // Bottom spacing before LT-01
+
+            Lt01Card(
+              energyItems: [
+                EnergyData(
+                  label: AppStrings.lifetimeEnergy,
+                  value: AppStrings.lifetimeEnergyValue,
+                  iconPath: ImageAssets.blueLightning,
+                  backgroundColor: const Color(0xFFE0F2FE),
+                ),
+                EnergyData(
+                  label: AppStrings.todayEnergy,
+                  value: AppStrings.todayEnergyValue,
+                  iconPath: ImageAssets.group11031,
+                  backgroundColor: const Color(0xFFFEF9C3),
+                ),
+                EnergyData(
+                  label: AppStrings.prevMeterEnergy,
+                  value: AppStrings.prevMeterEnergyValue,
+                  iconPath: ImageAssets.asset16,
+                  backgroundColor: const Color(0xFFFFF7ED),
+                ),
+                EnergyData(
+                  label: AppStrings.livePower,
+                  value: AppStrings.livePowerValue,
+                  iconPath: ImageAssets.group10987,
+                  backgroundColor: const Color(0xFFF3E8FF),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 30),
           ],
         ),
       ),
     );
   }
 
-  // --- Helper: Table Row ---
-  Widget _buildTableRow(String label, String val1, String val2,
-      {required bool isEven}) {
+  Widget _buildPvModuleBanner() {
     return Container(
-      color: isEven ? const Color(0xFFEEF3F9) : Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 4,
-            child: Text(label,
-                style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: const Color(0xFF374151))),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(val1,
-                textAlign: TextAlign.right,
-                style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF111827))),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(val2,
-                textAlign: TextAlign.right,
-                style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF111827))),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // --- Helper: Top Grid Tile ---
-  Widget _buildInfoTile(String title, String subtitle, String imagePath) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(6),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              blurRadius: 4,
-              offset: const Offset(0, 2)),
-        ],
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 0),
-      child: Row(
-        children: [
-          Image.asset(imagePath, width: 22, height: 22, fit: BoxFit.contain),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(title,
-                      style: GoogleFonts.inter(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF111827),
-                          height: 1.0)),
-                ),
-                const SizedBox(height: 2),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(subtitle,
-                      style: GoogleFonts.inter(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w400,
-                          color: const Color(0xFF6B7280),
-                          height: 1.0),
-                      maxLines: 1),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // --- Helper: Detail Grid Tile (New Section) ---
-  Widget _buildDetailTile(String title, String value, String imagePath) {
-    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              blurRadius: 4,
-              offset: const Offset(0, 2)),
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       child: Row(
         children: [
-          // Use Icon placeholder if image fails loading or for testing
-          Image.asset(imagePath, width: 26, height: 26, fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-            return const Icon(Icons.info_outline, color: Colors.blue, size: 26);
-          }),
+          Image.asset(
+            ImageAssets.maskGroup,
+            width: 24,
+            height: 24,
+            errorBuilder: (context, error, stackTrace) {
+              return Icon(
+                Icons.grid_view,
+                color: AppColors.primaryBlue,
+                size: 24,
+              );
+            },
+          ),
           const SizedBox(width: 10),
+          Text(AppStrings.totalPVModules, style: AppTextStyles.pvModuleLabel),
           Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    title,
-                    style: GoogleFonts.inter(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w400,
-                      color: const Color(0xFF6B7280), // Grey Label
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 2),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    value,
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700, // Bold Value
-                      color: const Color(0xFF111827), // Black
-                    ),
-                  ),
-                ),
-              ],
+            child: Text(
+              AppStrings.pvModuleDetails,
+              style: AppTextStyles.pvModuleValue,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
       ),
-    );
-  }
-
-  // ---------------------------------------------------------
-  // 1. MAIN CARD WIDGET (Place this call in your build method)
-  // ---------------------------------------------------------
-  Widget _buildLt01Card() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // -- Header Row --
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "LT_01",
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF111827),
-                  ),
-                ),
-                Row(
-                  children: [
-                    Image.asset('assets/Asset 1 5.png',height: 16, width: 16,), 
-                    const SizedBox(width: 4),
-                    Text(
-                      "495.505 kWp / 440 kW",
-                      style: GoogleFonts.inter(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF0684D9), 
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1, color: Color(0xFFF1F5F9)), // Subtle divider
-          
-          // -- 2x2 Info Grid --
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              children: [
-                // Row 1
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildEnergyItem(
-                        "Lifetime Energy",
-                        "352.96 MWh",
-                        "assets/Blue Lightning.png", //
-                        const Color(0xFFE0F2FE), // Light Blue bg
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildEnergyItem(
-                        "Today Energy",
-                        "273.69 kWh",
-                        "assets/Group 1000011031.png", //
-                        const Color(0xFFFEF9C3), // Light Yellow bg
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                // Row 2
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildEnergyItem(
-                        "Prev. Meter Energy",
-                        "0.00 MWh",
-                        "assets/Asset 1 6.png", //
-                        const Color(0xFFFFF7ED), // Light Orange/Yellow bg
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildEnergyItem(
-                        "Live Power",
-                        "352.96 MWh",
-                        "assets/Group 1000010987.png", //
-                        const Color(0xFFF3E8FF), // Light Purple bg
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ---------------------------------------------------------
-  // 2. HELPER WIDGET FOR INNER ITEMS
-  // ---------------------------------------------------------
-  Widget _buildEnergyItem(String label, String value, String iconPath, Color bgColor) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        // Colored Icon Container
-        Container(
-          width: 36,
-          height: 36,
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Image.asset(
-            iconPath,
-            fit: BoxFit.contain,
-            // Fallback icon just in case path is wrong
-            errorBuilder: (c, e, s) => Icon(Icons.flash_on, size: 16, color: Colors.grey[400]),
-          ),
-        ),
-        const SizedBox(width: 10),
-        // Text Column
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: GoogleFonts.inter(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF6B7280), // Grey Label
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 2),
-              Text(
-                value,
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF111827), // Black Value
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }
