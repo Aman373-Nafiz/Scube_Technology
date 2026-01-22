@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scube_technologies/screens/screen_1.dart';
+import 'package:scube_technologies/screens/screen_2.dart';
 import 'package:scube_technologies/screens/splash_screen.dart';
 
 void main() {
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Screen1(),
+      home: Screen2(),
       title: 'SCUBE',
       theme: ThemeData(
         primarySwatch: Colors.blue,
